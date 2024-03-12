@@ -7,7 +7,7 @@ const {createServer} = require("http");
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-	cors: "http://localhost:3000/",
+	cors: "https://frnt-tic-tac-toe.vercel.app/",
 });
 
 const allUsers = {};
