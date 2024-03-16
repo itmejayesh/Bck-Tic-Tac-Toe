@@ -7,7 +7,8 @@ const {createServer} = require("http");
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-	cors: "https://frnt-tic-tac-toe.vercel.app/",
+	// cors: "https://frnt-tic-tac-toe.vercel.app/",
+	cors: "http://localhost:3000/",
 });
 
 const allUsers = {};
@@ -35,7 +36,11 @@ io.on("connection", (socket) => {
 		}
 
 		if (opponentPlayer) {
+			const gameID =
+				Math.random().toString(36).substring(2, 15) +
+				Math.random().toString(36).substring(2, 15);
 			allRooms.push({
+				gameID: gameID,
 				player1: opponentPlayer,
 				player2: currentUser,
 			});
@@ -44,10 +49,12 @@ io.on("connection", (socket) => {
 			currentUser.socket.emit("OpponentFound", {
 				opponentName: opponentPlayer.playerName,
 				playingAs: "circle",
+				gameID: gameID,
 			});
 			opponentPlayer.socket.emit("OpponentFound", {
 				opponentName: currentUser.playerName,
 				playingAs: "cross",
+				gameID: gameID,
 			});
 			// Recive information from client side
 			currentUser.socket.on("gameStateFromClientSide", (data) => {
