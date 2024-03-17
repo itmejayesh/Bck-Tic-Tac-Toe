@@ -8,7 +8,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
 	// cors: "https://frnt-tic-tac-toe.vercel.app/",
-	cors: "http://localhost:3000/",
+	cors: "https://frnt-tic-tac-toe.vercel.app/",
 });
 
 const allUsers = {};
@@ -19,6 +19,7 @@ io.on("connection", (socket) => {
 	allUsers[socket.id] = {
 		socket,
 		online: true,
+		micMuted: false,
 	};
 
 	socket.on("request_to_play", (data) => {
@@ -50,13 +51,27 @@ io.on("connection", (socket) => {
 				opponentName: opponentPlayer.playerName,
 				playingAs: "circle",
 				gameID: gameID,
+				opponentMicMuted: opponentPlayer.micMuted,
 			});
 			opponentPlayer.socket.emit("OpponentFound", {
 				opponentName: currentUser.playerName,
 				playingAs: "cross",
 				gameID: gameID,
+				opponentMicMuted: currentUser.micMuted,
 			});
 			// Recive information from client side
+			currentUser.socket.on("micStateChanged", (isMuted) => {
+				currentUser.socket.emit("opponentMicStateChanged", {
+					isMuted: isMuted,
+				});
+			});
+
+			opponentPlayer.socket.on("micStateChanged", (isMuted) => {
+				opponentPlayer.socket.emit("opponentMicStateChanged", {
+					isMuted: isMuted,
+				});
+			});
+
 			currentUser.socket.on("gameStateFromClientSide", (data) => {
 				opponentPlayer.socket.emit("gameStateFromServerSide", {
 					...data,
