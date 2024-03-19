@@ -8,7 +8,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
 	// cors: "https://frnt-tic-tac-toe.vercel.app/",
-	cors: "https://frnt-tic-tac-toe.vercel.app/",
+	cors: "https://frnt-tic-tac-toe-rcgu.vercel.app/",
 });
 
 const allUsers = {};
